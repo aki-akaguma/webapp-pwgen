@@ -1,0 +1,37 @@
+:root {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color: #f8f9fa;
+  background-color: #212529;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 5rem;
+}
+
+#root {
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Custom class for title and lead paragraph */
+.app-title {
+  color: #004411 !important;
+}
+
+/* Custom class for password text */
+.password-text {
+  color: #000000 !important;
+}

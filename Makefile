@@ -19,7 +19,7 @@ apply-patch:
 #	npx @tailwindcss/cli -i ./input.css -o ./assets/css/tailwind.css
 
 bundle-web:
-	dx bundle --web --release --base-path "/tap3beat"
+	dx bundle --web --release --base-path "/pwgen"
 
 bundle-desktop:
 	dx bundle --desktop --release
@@ -29,17 +29,17 @@ bundle-desktop:
 bundle-android-aarch64:
 	@rm -fr "target/dx"
 	dx bundle --android --release --target=aarch64-linux-android
-	./scripts/apk-icon-assemble-r.sh tap3beat aarch64 resources/android
+	./scripts/apk-icon-assemble-r.sh pwgen aarch64 resources/android
 
 bundle-android-x86_64:
 	@rm -fr "target/dx"
 	dx bundle --android --release --target=x86_64-linux-android
-	./scripts/apk-icon-assemble-r.sh tap3beat x86_64 resources/android
+	./scripts/apk-icon-assemble-r.sh pwgen x86_64 resources/android
 
 bundle-android-wv:
 	@rm -fr "target/dx"
-	./scripts/wv-apk-icon-assemble-r.sh tap3beat resources/android ./scripts/android-webview-params.toml
+	./scripts/wv-apk-icon-assemble-r.sh pwgen resources/android ./scripts/android-webview-params.toml
 
 bundle-android-wva:
 	@rm -fr "target/dx"
-	./scripts/wva-apk-icon-assemble-r.sh tap3beat resources/android resources/android ./scripts/android-webview-assets-params.toml
+	./scripts/wva-apk-icon-assemble-r.sh pwgen resources/android resources/android ./scripts/android-webview-assets-params.toml

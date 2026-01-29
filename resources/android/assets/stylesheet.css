@@ -3,8 +3,7 @@ html {
     width: 100%;
 }
 body {
-    background-color: lightblue;
-    background: center / contain no-repeat url("background-image.jpg");
+    background: center/contain no-repeat url("background-image.jpg"), lightblue;
     height: 100%;
     width: 100%;
 }

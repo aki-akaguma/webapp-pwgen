@@ -4,6 +4,7 @@ html {
 }
 body {
     background-color: lightblue;
+    background: center / contain no-repeat url("background-image.jpg");
     height: 100%;
     width: 100%;
 }

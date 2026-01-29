@@ -22,7 +22,7 @@ crates = ["dioxus-fullstack"]
 dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.3" }
 
 [dependencies]
-dioxus = { version = "0.7.3", features = ["fullstack"] }
+dioxus = { version = "0.7.3", features = ["fullstack","router"] }
 dioxus-fullstack = "0.7.3"
 dioxus-desktop = { version = "0.7.3", optional=true }
 dioxus-logger = "0.7.3"

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * wva: background
 
+### Changed
+* wva: preload: `pre.html`
+
 ### Fixed
 * wva: invalid link
 * `project_name` in `Makefile`

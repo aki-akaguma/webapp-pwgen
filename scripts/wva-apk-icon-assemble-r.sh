@@ -31,7 +31,10 @@ fi
     #rm app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
     rm app/src/main/res/mipmap-anydpi/*.xml
     cp -r ../../../$icon_path/res app/src/main/
-    cp -r ../../../$assets_path/assets app/src/main/
+    #cp -r ../../../$assets_path/assets app/src/main/
+    mkdir -p app/src/main/assets
+    cp -r ../../../public/pre-res app/src/main/assets/
+    cp ../../../public/pre.html app/src/main/assets/
     ./gradlew assembleRelease
     # output: app/build/outputs/apk/release/app-release-unsigned.apk
     cp app/build/outputs/apk/release/app-release-unsigned.apk ../../../target/apk-unsigned/${project_name}-wva-app-release-unsigned.apk

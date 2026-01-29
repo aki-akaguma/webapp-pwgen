@@ -49,7 +49,34 @@ fn main() {
 
     // In the other case, simple launch app
     #[cfg(any(debug_assertions, not(feature = "desktop")))]
-    dioxus::launch(App);
+    dioxus::launch(base_route);
+}
+
+#[derive(Routable, Clone, PartialEq)]
+enum Route {
+    #[route("/home")]
+    App,
+    #[route("/")]
+    Index,
+}
+
+#[component]
+fn base_route() -> Element {
+    rsx! {
+        Router::<Route> {}
+    }
+}
+
+#[component]
+fn Index() -> Element {
+    #[cfg(feature = "web")]
+    let JS: &str = "window.location.replace('pre.html');";
+    #[cfg(not(feature = "web"))]
+    let JS: &str = "window.location.replace('https://aki.omusubi.org/pwgen/pre.html');";
+    use_future(move || async move {
+        let _ = document::eval(JS).await;
+    });
+    rsx! {}
 }
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");

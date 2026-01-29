@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="pre-res/stylesheet.css">
+  <link rel="stylesheet" href="pre-res/loading.css">
+  <title>Password Generator</title>
+</head>
+<body>
+  <div id="menter" onclick="do_2nd_stage()">
+    <div>
+      <img src="pre-res/overlay.svg" width="360" height="720">
+    </div>
+    <div id="sentence">
+      <p id="title">Password generator</p>
+      <p id="prompt">Tap to Start</p>
+    </div>
+  </div>
+  <script>
+    function do_2nd_stage() {
+      const insert_html = '<div class="overlay"><div class="spinner-outer"><div class="spinner"></div></div></div>';
+      const container = document.getElementById('menter');
+      container.innerHTML = container.innerHTML + insert_html;
+      setTimeout(() => {
+        window.location.replace('https://aki.omusubi.org/pwgen/home');
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

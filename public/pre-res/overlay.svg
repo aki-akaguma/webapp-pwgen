@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 360 720" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <filter id="filter1159" x="-.058755" y="-.76495" width="1.1175" height="2.5299" color-interpolation-filters="sRGB">
+   <feGaussianBlur result="blur" stdDeviation="10 10"/>
+  </filter>
+  <filter id="filter1167" x="-.15696" y="-.9336" width="1.3139" height="2.8672" color-interpolation-filters="sRGB">
+   <feGaussianBlur result="blur" stdDeviation="10 10"/>
+  </filter>
+ </defs>
+ <rect y="474.98" width="360" height="200" fill-opacity="0"/>
+ <text fill="#000000" font-size="80px" style="shape-inside:url(#rect112);white-space:pre" xml:space="preserve"/>
+ <g font-family="sans-serif" font-weight="bold">
+  <text transform="scale(.78934 1.2669)" x="21.902031" y="456.42813" fill="#ffffff" filter="url(#filter1159)" font-size="40.746px" stroke-width="1.1754" xml:space="preserve"><tspan x="21.902031" y="456.42813" fill="#000000" stroke-width="1.1754">Password Generator</tspan></text>
+  <text transform="scale(.78934 1.2669)" x="21.902031" y="456.42813" fill="#b19c27" font-size="40.746px" stroke-width="1.1754" xml:space="preserve"><tspan x="21.902031" y="456.42813" fill="#b19c27" stroke="#000000" stroke-opacity=".50708" stroke-width="2">Password Generator</tspan></text>
+  <text x="104.45188" y="626.6109" fill="#ffffff" filter="url(#filter1167)" font-size="26.667px" xml:space="preserve"><tspan x="104.45188" y="626.6109" fill="#000000">Tap to Start</tspan></text>
+  <text x="104.45188" y="626.6109" fill="#e43434" font-size="26.667px" xml:space="preserve"><tspan x="104.45188" y="626.6109" stroke="#000000" stroke-opacity=".50708" stroke-width="2">Tap to Start</tspan></text>
+ </g>
+</svg>

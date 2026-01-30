@@ -1,3 +1,4 @@
+use async_sleep_aki::delayed_call;
 use dioxus::prelude::*;
 #[cfg(all(not(debug_assertions), feature = "desktop"))]
 use dioxus_desktop::{Config, WindowBuilder};
@@ -55,7 +56,7 @@ fn main() {
 #[cfg(not(feature = "mobile"))]
 #[derive(Routable, Clone, PartialEq)]
 enum Route {
-    #[route("/home")]
+    #[route("/app")]
     App,
     #[route("/")]
     Index,
@@ -93,13 +94,41 @@ fn Index() -> Element {
 
 #[component]
 fn Pre() -> Element {
-    dioxus_logger::tracing::info!("PRE:1");
-    let contents = include_str!("../public/pre.html");
-    //#[cfg(not(feature = "mobile"))]
-    let contents = contents.replace(r#"https://aki.omusubi.org/pwgen/home"#, "home");
+    let mut is_loading = use_signal(|| false);
     rsx! {
+        document::Link { rel: "stylesheet", href: "pre-res/stylesheet.css" }
+        document::Link { rel: "stylesheet", href: "pre-res/loading.css" }
         div {
-            dangerous_inner_html: "{contents}"
+            id: "menter",
+            onclick: move |_evt| {
+                is_loading.set(true);
+                #[cfg(debug_assertions)]
+                let js = r#"window.location.replace('app');"#;
+                #[cfg(not(debug_assertions))]
+                let js = r#"window.location.replace('https://aki.omusubi.org/pwgen/app');"#;
+                spawn(
+                    delayed_call(
+                        500,
+                        async move {
+                            let _ = document::eval(js).await;
+                        },
+                    ),
+                );
+            },
+            div {
+                img { src: "pre-res/overlay.svg", width: "360", height: "720" }
+            }
+            div { id: "sentence",
+                p { id: "title", "Password generator" }
+                p { id: "prompt", "Tap to Start" }
+            }
+            if is_loading() {
+                div { class: "overlay",
+                    div { class: "spinner-outer",
+                        div { class: "spinner" }
+                    }
+                }
+            }
         }
     }
 }

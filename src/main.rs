@@ -52,12 +52,22 @@ fn main() {
     dioxus::launch(base_route);
 }
 
+#[cfg(not(feature = "mobile"))]
 #[derive(Routable, Clone, PartialEq)]
 enum Route {
     #[route("/home")]
     App,
     #[route("/")]
     Index,
+    #[route("/pre")]
+    Pre,
+}
+
+#[cfg(feature = "mobile")]
+#[derive(Routable, Clone, PartialEq)]
+enum Route {
+    #[route("/")]
+    App,
 }
 
 #[component]
@@ -69,14 +79,29 @@ fn base_route() -> Element {
 
 #[component]
 fn Index() -> Element {
-    #[cfg(feature = "web")]
+    #[cfg(all(feature = "web", debug_assertions))]
+    let JS: &str = "window.location.replace('pre');";
+    #[cfg(not(all(feature = "web", debug_assertions)))]
     let JS: &str = "window.location.replace('pre.html');";
-    #[cfg(not(feature = "web"))]
-    let JS: &str = "window.location.replace('https://aki.omusubi.org/pwgen/pre.html');";
     use_future(move || async move {
-        let _ = document::eval(JS).await;
+        //dioxus_logger::tracing::info!("INDEX:1");
+        let _r = document::eval(JS).await.unwrap();
+        //dioxus_logger::tracing::info!("INDEX:2:{_r}");
     });
     rsx! {}
+}
+
+#[component]
+fn Pre() -> Element {
+    dioxus_logger::tracing::info!("PRE:1");
+    let contents = include_str!("../public/pre.html");
+    //#[cfg(not(feature = "mobile"))]
+    let contents = contents.replace(r#"https://aki.omusubi.org/pwgen/home"#, "home");
+    rsx! {
+        div {
+            dangerous_inner_html: "{contents}"
+        }
+    }
 }
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");

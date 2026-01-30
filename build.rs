@@ -13,6 +13,7 @@ fn main() {
     rust_version_info_file(path.as_str(), "Cargo.toml");
     //
     android_native_proc();
+    web_proc();
 }
 
 fn android_native_proc() {
@@ -39,6 +40,30 @@ fn android_native_proc() {
                 ));
             } else if let Some(_idx) = line.find("minSdk") {
                 outs.push("        minSdk = 26".to_string());
+            } else {
+                outs.push(line.to_string());
+            }
+        }
+        //
+        let _ = std::fs::write(&path, outs.join("\n"));
+    }
+}
+
+fn web_proc() {
+    // web
+    // override pre.html
+    let path = format!(
+        "target/dx/{}/debug/web/public/pre.html",
+        env!("CARGO_PKG_NAME")
+    );
+    if std::fs::exists(&path).unwrap() {
+        let s = std::fs::read_to_string(&path).unwrap();
+        let lines: Vec<&str> = s.split('\n').collect();
+        let mut outs: Vec<String> = Vec::new();
+        let ms = "https://aki.omusubi.org/pwgen/home";
+        for line in lines {
+            if let Some(_idx) = line.find(ms) {
+                outs.push(line.replace(ms, "home"));
             } else {
                 outs.push(line.to_string());
             }

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * wva: preload: `pre.html`
 
 ### Fixed
+* web: `pre`
 * wva: invalid link
 * `project_name` in `Makefile`
 

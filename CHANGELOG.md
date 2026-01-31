@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * wva: preload: `pre.html`
 
 ### Fixed
+* css: The css order is reversed. bootstrap.css and main.css
 * web: `pre`
 * wva: invalid link
 * `project_name` in `Makefile`

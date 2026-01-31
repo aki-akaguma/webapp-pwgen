@@ -46,6 +46,7 @@ fn main() {
                     .with_title("Password generator"),
             ),
         )
+        //.launch(base_route);
         .launch(App);
 
     // In the other case, simple launch app
@@ -167,16 +168,16 @@ fn App() -> Element {
 #[component]
 fn MyStyle() -> Element {
     rsx! {
-        document::Stylesheet { href: asset!("/assets/css/main.css") }
         document::Stylesheet { href: asset!("/assets/css/bootstrap.min.css") }
+        document::Stylesheet { href: asset!("/assets/css/main.css") }
     }
 }
 
 #[cfg(feature = "inline_style")]
 #[component]
 fn MyStyle() -> Element {
-    const MAIN_CSS: &str = const_css_minify::minify!("../assets/css/main.css");
     const BOOTSTRAP_CSS: &str = const_css_minify::minify!("../assets/css/bootstrap.min.css");
+    const MAIN_CSS: &str = const_css_minify::minify!("../assets/css/main.css");
     rsx! {
         style { "{MAIN_CSS}" }
         style { "{BOOTSTRAP_CSS}" }

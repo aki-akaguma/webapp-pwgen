@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * wva: background
 
 ### Changed
+* organized html id
 * router: `/home` to `/app`
 * wva: preload: `pre.html`
 

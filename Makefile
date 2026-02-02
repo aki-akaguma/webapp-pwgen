@@ -12,6 +12,9 @@ list:
 clean:
 	cargo clean
 
+clean-dx:
+	rm -fr target/dx
+
 apply-patch:
 	cargo patch-crate
 

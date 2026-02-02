@@ -1,6 +1,7 @@
 use async_sleep_aki::delayed_call;
 use dioxus::prelude::*;
-#[cfg(all(not(debug_assertions), feature = "desktop"))]
+//#[cfg(all(not(debug_assertions), feature = "desktop"))]
+#[cfg(feature = "desktop")]
 use dioxus_desktop::{Config, WindowBuilder};
 
 use components::*;
@@ -36,6 +37,7 @@ fn main() {
         dioxus_fullstack::set_server_url(backend_url);
     }
 
+    /*
     // In the case of only release desktop, set a window title
     #[cfg(all(not(debug_assertions), feature = "desktop"))]
     dioxus::LaunchBuilder::new()
@@ -52,9 +54,52 @@ fn main() {
     // In the other case, simple launch app
     #[cfg(any(debug_assertions, not(feature = "desktop")))]
     dioxus::launch(base_route);
+    */
+    dioxus::LaunchBuilder::new()
+        // Set the desktop config
+        .with_cfg(desktop! {
+            Config::default().with_menu(None).with_window(
+                WindowBuilder::new()
+                    .with_maximized(false)
+                    .with_title("Password generator"),
+            )
+        })
+        // Set the server config only if we are building the server target
+        .with_cfg(server_only! {
+            ServeConfig::builder()
+                // Enable incremental rendering
+                .incremental(
+                    dioxus::server::IncrementalRendererConfig::new()
+                        // Store static files in the public directory where other static assets
+                        // like wasm are stored
+                        .static_dir(
+                            std::env::current_exe()
+                                .unwrap()
+                                .parent()
+                                .unwrap()
+                                .join("public")
+                        )
+                        // Don't clear the public folder on every build. The public folder has
+                        // other files including the wasm
+                        // binary and static assets required for the app to run
+                        .clear_cache(false)
+                )
+                .enable_out_of_order_streaming()
+        })
+        //.launch(App);
+        .launch(base_route);
 }
 
-#[cfg(not(feature = "mobile"))]
+#[server(endpoint = "static_routes", output = server_fn::codec::Json)]
+async fn static_routes() -> Result<Vec<String>, ServerFnError> {
+    // The `Routable` trait has a `static_routes` method that returns all static routes in the enum
+    Ok(Route::static_routes()
+        .iter()
+        .map(ToString::to_string)
+        .collect())
+}
+
+//#[cfg(not(feature = "mobile"))]
 #[derive(Routable, Clone, PartialEq)]
 enum Route {
     #[route("/app")]
@@ -65,12 +110,14 @@ enum Route {
     Pre,
 }
 
+/*
 #[cfg(feature = "mobile")]
 #[derive(Routable, Clone, PartialEq)]
 enum Route {
     #[route("/")]
     App,
 }
+*/
 
 #[component]
 fn base_route() -> Element {
@@ -81,6 +128,7 @@ fn base_route() -> Element {
 
 #[component]
 fn Index() -> Element {
+    /*
     #[cfg(all(feature = "web", debug_assertions))]
     let JS: &str = "window.location.replace('pre');";
     #[cfg(not(all(feature = "web", debug_assertions)))]
@@ -90,43 +138,60 @@ fn Index() -> Element {
         let _r = document::eval(JS).await.unwrap();
         //dioxus_logger::tracing::info!("INDEX:2:{_r}");
     });
+    */
+    use_future(move || async move {
+        navigator().replace(Route::Pre {});
+    });
     rsx! {}
 }
+
+const PRE_STYLE: Asset = asset!("/assets/pre/stylesheet.css");
+const PRE_LOADING: Asset = asset!("/assets/pre/loading.css");
+const PRE_BGIMAGE: Asset = asset!("/assets/pre/background-image.jpg");
+const PRE_BGIMAGE_AVIF: Asset = asset!(
+    "/assets/pre/background-image.jpg",
+    ImageAssetOptions::new().with_format(ImageFormat::Avif)
+);
+const PRE_OVERLAY: Asset = asset!("/assets/pre/overlay.svg");
 
 #[component]
 fn Pre() -> Element {
     let mut is_loading = use_signal(|| false);
     rsx! {
-        document::Link { rel: "stylesheet", href: "pre-res/stylesheet.css" }
-        document::Link { rel: "stylesheet", href: "pre-res/loading.css" }
+        document::Stylesheet { href: CSS_BOOTSTRAP }
+        document::Stylesheet { href: CSS_MAIN }
+        document::Stylesheet { href: PRE_STYLE }
+        document::Stylesheet { href: PRE_LOADING }
         div {
-            id: "menter",
+            id: "pre-shell",
             onclick: move |_evt| {
                 is_loading.set(true);
-                #[cfg(debug_assertions)]
-                let js = r#"window.location.replace('app');"#;
-                #[cfg(not(debug_assertions))]
-                let js = r#"window.location.replace('https://aki.omusubi.org/pwgen/app');"#;
                 spawn(
                     delayed_call(
                         500,
                         async move {
-                            let _ = document::eval(js).await;
+                            navigator().replace(Route::App {});
                         },
                     ),
                 );
             },
-            div {
-                img { src: "pre-res/overlay.svg", width: "360", height: "720" }
-            }
-            div { id: "sentence",
-                p { id: "title", "Password generator" }
-                p { id: "prompt", "Tap to Start" }
-            }
-            if is_loading() {
-                div { class: "overlay",
-                    div { class: "spinner-outer",
-                        div { class: "spinner" }
+            div { id: "menter",
+                picture {
+                    source { src: PRE_BGIMAGE_AVIF, r#type: "image/avif" }
+                    img { src: PRE_BGIMAGE, alt: "image", width: "360" }
+                }
+                div { class: "overlay-string",
+                    img {
+                        src: PRE_OVERLAY,
+                        width: "360",
+                        height: "120",
+                    }
+                }
+                if is_loading() {
+                    div { class: "overlay",
+                        div { class: "spinner-outer",
+                            div { class: "spinner" }
+                        }
                     }
                 }
             }
@@ -158,18 +223,24 @@ fn App() -> Element {
         MyStyle {}
         Alive {}
         Info {}
-        Home {}
-        Version {}
+        div {
+            id: "app-shell",
+            Home {}
+            Version {}
+        }
     }
 }
+
+const CSS_BOOTSTRAP: Asset = asset!("/assets/css/bootstrap.min.css");
+const CSS_MAIN: Asset = asset!("/assets/css/main.css");
 
 /// the component of `main` style sheet
 #[cfg(not(feature = "inline_style"))]
 #[component]
 fn MyStyle() -> Element {
     rsx! {
-        document::Stylesheet { href: asset!("/assets/css/bootstrap.min.css") }
-        document::Stylesheet { href: asset!("/assets/css/main.css") }
+        document::Stylesheet { href: CSS_BOOTSTRAP }
+        document::Stylesheet { href: CSS_MAIN }
     }
 }
 

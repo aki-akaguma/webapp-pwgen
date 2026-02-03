@@ -35,8 +35,6 @@ console_error_panic_hook = "0.1"
 reqwest = { version = "0.12", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 
-const-css-minify = { version="1.0", optional = true }
-
 [target.'cfg(target_os = "android")'.dependencies]
 openssl = { version = "0.10", features = ["vendored"] }
 
@@ -63,25 +61,3 @@ database = []
 backend_delay = []
 backend_homedir = ["database"]
 backend_text = []
-
-debian_build = ["inline_style", "desktop"]
-inline_style = ["dep:const-css-minify"]
-
-
-[package.metadata.deb]
-features = ["debian_build"]
-section = "AAA-webapp"
-priority = "optional"
-maintainer = "aki <aki.akaguma@hotmail.com>"
-extended-description = """\
-Password generator.
-"""
-depends = "$auto"
-separate-debug-symbols = true
-
-assets = [
-    ["target/release/pwgen", "usr/bin/pwgen", "755"],
-    ["target/rust-version-info.txt", "usr/share/doc/pwgen/", "644"],
-    ["README.md", "usr/share/doc/pwgen/", "644"],
-]
-

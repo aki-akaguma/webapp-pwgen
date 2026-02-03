@@ -1,0 +1,22 @@
+#pwgen {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+#pwgen-header {
+  margin-top: 16px;
+}
+
+/* Custom class for title and lead paragraph */
+.app-title {
+  color: #004411 !important;
+}
+
+.app-title-bold {
+  font-weight: 600;
+}
+
+/* Custom class for password text */
+.password-text {
+  color: #000000 !important;
+}

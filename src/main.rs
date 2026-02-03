@@ -1,6 +1,5 @@
 use async_sleep_aki::delayed_call;
 use dioxus::prelude::*;
-//#[cfg(all(not(debug_assertions), feature = "desktop"))]
 #[cfg(feature = "desktop")]
 use dioxus_desktop::{Config, WindowBuilder};
 
@@ -37,24 +36,6 @@ fn main() {
         dioxus_fullstack::set_server_url(backend_url);
     }
 
-    /*
-    // In the case of only release desktop, set a window title
-    #[cfg(all(not(debug_assertions), feature = "desktop"))]
-    dioxus::LaunchBuilder::new()
-        .with_cfg(
-            Config::default().with_menu(None).with_window(
-                WindowBuilder::new()
-                    .with_maximized(false)
-                    .with_title("Password generator"),
-            ),
-        )
-        //.launch(base_route);
-        .launch(App);
-
-    // In the other case, simple launch app
-    #[cfg(any(debug_assertions, not(feature = "desktop")))]
-    dioxus::launch(base_route);
-    */
     dioxus::LaunchBuilder::new()
         // Set the desktop config
         .with_cfg(desktop! {
@@ -86,8 +67,11 @@ fn main() {
                 )
                 .enable_out_of_order_streaming()
         })
-        //.launch(App);
-        .launch(base_route);
+        .launch(|| {
+            rsx! {
+                Router::<Route> {}
+            }
+        });
 }
 
 #[server(endpoint = "static_routes", output = server_fn::codec::Json)]
@@ -99,46 +83,18 @@ async fn static_routes() -> Result<Vec<String>, ServerFnError> {
         .collect())
 }
 
-//#[cfg(not(feature = "mobile"))]
 #[derive(Routable, Clone, PartialEq)]
 enum Route {
-    #[route("/app")]
-    App,
     #[route("/")]
     Index,
     #[route("/pre")]
     Pre,
-}
-
-/*
-#[cfg(feature = "mobile")]
-#[derive(Routable, Clone, PartialEq)]
-enum Route {
-    #[route("/")]
+    #[route("/app")]
     App,
-}
-*/
-
-#[component]
-fn base_route() -> Element {
-    rsx! {
-        Router::<Route> {}
-    }
 }
 
 #[component]
 fn Index() -> Element {
-    /*
-    #[cfg(all(feature = "web", debug_assertions))]
-    let JS: &str = "window.location.replace('pre');";
-    #[cfg(not(all(feature = "web", debug_assertions)))]
-    let JS: &str = "window.location.replace('pre.html');";
-    use_future(move || async move {
-        //dioxus_logger::tracing::info!("INDEX:1");
-        let _r = document::eval(JS).await.unwrap();
-        //dioxus_logger::tracing::info!("INDEX:2:{_r}");
-    });
-    */
     use_future(move || async move {
         navigator().replace(Route::Pre {});
     });
@@ -181,11 +137,7 @@ fn Pre() -> Element {
                     img { src: PRE_BGIMAGE, alt: "image", width: "360" }
                 }
                 div { class: "overlay-string",
-                    img {
-                        src: PRE_OVERLAY,
-                        width: "360",
-                        height: "120",
-                    }
+                    img { src: PRE_OVERLAY, width: "360", height: "120" }
                 }
                 if is_loading() {
                     div { class: "overlay",
@@ -200,6 +152,8 @@ fn Pre() -> Element {
 }
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
+const CSS_BOOTSTRAP: Asset = asset!("/assets/css/bootstrap.min.css");
+const CSS_MAIN: Asset = asset!("/assets/css/main.css");
 
 /// the component of dioxus `App`
 #[component]
@@ -219,38 +173,14 @@ fn App() -> Element {
                 "family=Inter:wght@400;500;700&display=swap",
             ),
         }
+        document::Stylesheet { href: CSS_BOOTSTRAP }
+        document::Stylesheet { href: CSS_MAIN }
 
-        MyStyle {}
         Alive {}
         Info {}
-        div {
-            id: "app-shell",
+        div { id: "app-shell",
             Home {}
             Version {}
         }
-    }
-}
-
-const CSS_BOOTSTRAP: Asset = asset!("/assets/css/bootstrap.min.css");
-const CSS_MAIN: Asset = asset!("/assets/css/main.css");
-
-/// the component of `main` style sheet
-#[cfg(not(feature = "inline_style"))]
-#[component]
-fn MyStyle() -> Element {
-    rsx! {
-        document::Stylesheet { href: CSS_BOOTSTRAP }
-        document::Stylesheet { href: CSS_MAIN }
-    }
-}
-
-#[cfg(feature = "inline_style")]
-#[component]
-fn MyStyle() -> Element {
-    const BOOTSTRAP_CSS: &str = const_css_minify::minify!("../assets/css/bootstrap.min.css");
-    const MAIN_CSS: &str = const_css_minify::minify!("../assets/css/main.css");
-    rsx! {
-        style { "{MAIN_CSS}" }
-        style { "{BOOTSTRAP_CSS}" }
     }
 }

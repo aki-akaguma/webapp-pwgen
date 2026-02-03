@@ -14,13 +14,13 @@
 }
 
 #app-shell {
-    cursor: pointer;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     background-color: lightblue;
     width: 100%;
-    max-width: 1200px;
+    max-width: 700px;
+    min-width: 260px;
     margin: 0 auto;
     padding: 0;
     box-sizing: border-box;
@@ -30,18 +30,7 @@
 #app-shell > div {
     flex: 1;
 }
-#root {
-  width: 100%;
-  max-width: 600px;
-    margin: 0 auto;
-}
 
-/* Custom class for title and lead paragraph */
-.app-title {
-  color: #004411 !important;
-}
-
-/* Custom class for password text */
-.password-text {
-  color: #000000 !important;
+.version {
+    margin-left: auto;
 }

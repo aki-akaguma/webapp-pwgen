@@ -1,41 +1,39 @@
 use dioxus::prelude::*;
 
+const CSS_PWGEN: Asset = asset!("/assets/css/pwgen.css");
+
 /// the component of `tap tap tap beat`
 #[component]
 pub fn Pwgen() -> Element {
+    let title1_s = "Password Generator";
+    let title2_s = "Create secure passwords tailored to your needs.";
+    let passwords = use_signal(Vec::<String>::new);
     rsx! {
-        MyStyle {}
-        div { id: "root",
-            div { id: "pwgen-content", PwgenContent {} }
+        document::Stylesheet { href: CSS_PWGEN }
+        div { id: "pwgen",
+            div { id: "pwgen-header", class: "text-center",
+                h1 { class: "display-4 app-title app-title-bold", "{title1_s}" }
+                p { class: "lead app-title", "{title2_s}" }
+            }
+            div { class: "card bg-dark border-secondary shadow-lg",
+                div { class: "card-body text-light",
+                    PwgenContentInputs { passwords }
+                }
+            }
+            if !passwords.is_empty() {
+                PwgenContentGeneratedPasswordsElement { passwords }
+            }
         }
     }
 }
 
-#[cfg(not(feature = "inline_style"))]
 #[component]
-fn MyStyle() -> Element {
-    rsx! {
-        document::Stylesheet { href: asset!("/assets/css/pwgen.css") }
-    }
-}
-
-#[cfg(feature = "inline_style")]
-#[component]
-fn MyStyle() -> Element {
-    const TAPB_CSS: &str = const_css_minify::minify!("../../assets/css/pwgen.css");
-    rsx! {
-        style { "{TAPB_CSS}" }
-    }
-}
-
-#[component]
-fn PwgenContent() -> Element {
+fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
     let mut password_length = use_signal(|| 15);
     let mut include_lowercase = use_signal(|| true);
     let mut include_uppercase = use_signal(|| true);
     let mut include_numbers = use_signal(|| true);
     let mut include_symbols = use_signal(|| false);
-    let mut passwords = use_signal(|| Vec::<String>::new());
     // generate passwords on initial render
     use_future(move || async move {
         let params = PwgenParams {
@@ -48,88 +46,75 @@ fn PwgenContent() -> Element {
         passwords.set(new_passwords);
     });
     rsx! {
-        div { id: "pwgen",
-            div { id: "pwgen-header", class: "text-center mb-5",
-                h1 { class: "display-4 app-title", "Password Generator" }
-                p { class: "lead app-title", "Create secure passwords tailored to your needs." }
+        div { class: "row g-4",
+            div { class: "col-12",
+                label { class: "form-label", r#for: "passwordLength",
+                    "Password Length: {password_length}"
+                }
+                input {
+                    id: "passwordLength",
+                    r#type: "range",
+                    class: "form-range",
+                    min: "4",
+                    max: "32",
+                    value: "{password_length}",
+                    oninput: move |evt| {
+                        let v = evt.value().parse::<i32>().unwrap();
+                        password_length.set(v);
+                    },
+                }
             }
-            div { class: "card bg-dark border-secondary shadow-lg",
-                div { class: "card-body text-light",
-                    div { class: "row g-4",
-                        div { class: "col-12",
-                            label { class: "form-label", r#for: "passwordLength",
-                                "Password Length: {password_length}"
-                            }
-                            input {
-                                id: "passwordLength",
-                                r#type: "range",
-                                class: "form-range",
-                                min: "4",
-                                max: "32",
-                                value: "{password_length}",
-                                onchange: move |evt| {
-                                    let v = evt.value().parse::<i32>().unwrap();
-                                    password_length.set(v);
-                                },
-                            }
-                        }
-                        div { class: "col-12",
-                            div { class: "row",
-                                PwgenContentCB {
-                                    id: "includeLowercase",
-                                    label: "Lowercase (a-z)",
-                                    is_checked: include_lowercase(),
-                                    onchange: move |_evt| {
-                                        include_lowercase.set(!include_lowercase());
-                                    },
-                                }
-                                PwgenContentCB {
-                                    id: "includeUppercase",
-                                    label: "Uppercase (A-Z)",
-                                    is_checked: include_uppercase(),
-                                    onchange: move |_evt| {
-                                        include_uppercase.set(!include_uppercase());
-                                    },
-                                }
-                                PwgenContentCB {
-                                    id: "includeNumbers",
-                                    label: "Numbers (0-9)",
-                                    is_checked: include_numbers(),
-                                    onchange: move |_evt| {
-                                        include_numbers.set(!include_numbers());
-                                    },
-                                }
-                                PwgenContentCB {
-                                    id: "includeSymbols",
-                                    label: "Symbols (!@#$...)",
-                                    is_checked: include_symbols(),
-                                    onchange: move |_evt| {
-                                        include_symbols.set(!include_symbols());
-                                    },
-                                }
-                            }
-                        }
+            div { class: "col-12",
+                div { class: "row",
+                    PwgenContentCB {
+                        id: "includeLowercase",
+                        label: "Lowercase (a-z)",
+                        is_checked: include_lowercase(),
+                        onchange: move |_evt| {
+                            include_lowercase.set(!include_lowercase());
+                        },
                     }
-                    div { class: "d-grid mt-4",
-                        button {
-                            class: "btn btn-primary btn-lg",
-                            onclick: move |_evt| {
-                                let params = PwgenParams {
-                                    include_lowercase: include_lowercase(),
-                                    include_uppercase: include_uppercase(),
-                                    include_numbers: include_numbers(),
-                                    include_symbols: include_symbols(),
-                                };
-                                let new_passwords = generate_passwords(password_length(), params);
-                                passwords.set(new_passwords);
-                            },
-                            "Generate Passwords"
-                        }
+                    PwgenContentCB {
+                        id: "includeUppercase",
+                        label: "Uppercase (A-Z)",
+                        is_checked: include_uppercase(),
+                        onchange: move |_evt| {
+                            include_uppercase.set(!include_uppercase());
+                        },
+                    }
+                    PwgenContentCB {
+                        id: "includeNumbers",
+                        label: "Numbers (0-9)",
+                        is_checked: include_numbers(),
+                        onchange: move |_evt| {
+                            include_numbers.set(!include_numbers());
+                        },
+                    }
+                    PwgenContentCB {
+                        id: "includeSymbols",
+                        label: "Symbols (!@#$...)",
+                        is_checked: include_symbols(),
+                        onchange: move |_evt| {
+                            include_symbols.set(!include_symbols());
+                        },
                     }
                 }
             }
-            if !passwords.is_empty() {
-                PwgenContentGeneratedPasswordsElement { passwords }
+        }
+        div { class: "d-grid mt-4",
+            button {
+                class: "btn btn-primary btn-lg",
+                onclick: move |_evt| {
+                    let params = PwgenParams {
+                        include_lowercase: include_lowercase(),
+                        include_uppercase: include_uppercase(),
+                        include_numbers: include_numbers(),
+                        include_symbols: include_symbols(),
+                    };
+                    let new_passwords = generate_passwords(password_length(), params);
+                    passwords.set(new_passwords);
+                },
+                "Generate Passwords"
             }
         }
     }
@@ -161,41 +146,44 @@ fn PwgenContentCB(
 
 #[component]
 fn PwgenContentGeneratedPasswordsElement(passwords: ReadSignal<Vec<String>>) -> Element {
-    let mut copied_index = use_signal(|| Option::<i32>::None);
+    let title_s = "Generated Passwords";
     rsx! {
         div { class: "mt-5",
-            h2 { class: "text-center mb-4 app-title", "Generated Passwords" }
+            h2 { class: "text-center mb-4 app-title", "{title_s}" }
             ul { class: "list-group list-group-flush",
-                for (i , password) in passwords().into_iter().enumerate() {
-                    {
-                        let i = i as i32;
-                        let is_current = if let Some(ci) = copied_index() {
-                            if ci == i { true } else { false }
-                        } else {
-                            false
-                        };
-                        rsx! {
-                            PwgenContentGeneratedPassword {
-                                is_current,
-                                password: password.clone(),
-                                i,
-                                onclick: move |_evt| {
-                                    let password = password.clone();
-                                    async move {
-                                        let _ = copy_to_clipboard(password).await;
-                                        copied_index.set(Some(i));
-                                        spawn(
-                                            async_sleep_aki::delayed_call(
-                                                2000,
-                                                async move {
-                                                    copied_index.set(None);
-                                                },
-                                            ),
-                                        );
-                                    }
-                                },
+                PwgenContentGeneratedPasswordsElement2 { passwords }
+            }
+        }
+    }
+}
+
+#[component]
+fn PwgenContentGeneratedPasswordsElement2(passwords: ReadSignal<Vec<String>>) -> Element {
+    let mut copied_index = use_signal(|| Option::<i32>::None);
+    rsx! {
+        for (i , password) in passwords().into_iter().enumerate() {
+            {
+                let i = i as i32;
+                let is_current = if let Some(ci) = copied_index() { ci == i } else { false };
+                rsx! {
+                    PwgenContentGeneratedPassword {
+                        is_current,
+                        password: password.clone(),
+                        onclick: move |_evt| {
+                            let password = password.clone();
+                            async move {
+                                let _ = copy_to_clipboard(password).await;
+                                copied_index.set(Some(i));
+                                spawn(
+                                    async_sleep_aki::delayed_call(
+                                        2000,
+                                        async move {
+                                            copied_index.set(None);
+                                        },
+                                    ),
+                                );
                             }
-                        }
+                        },
                     }
                 }
             }
@@ -207,7 +195,6 @@ fn PwgenContentGeneratedPasswordsElement(passwords: ReadSignal<Vec<String>>) -> 
 fn PwgenContentGeneratedPassword(
     is_current: bool,
     password: String,
-    i: i32,
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
     let btn_class = if is_current {
@@ -215,16 +202,14 @@ fn PwgenContentGeneratedPassword(
     } else {
         "btn-info"
     };
+    let btn_label = if is_current { "Copied!" } else { "Copy" };
     rsx! {
         li { class: "list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center",
             span { class: "font-monospace fs-5 password-text", "{password}" }
             button {
                 class: "btn {btn_class} btn-sm",
                 onclick: move |evt| onclick.call(evt),
-                {
-                    let s = if is_current { "Copied!" } else { "Copy" };
-                    rsx! { "{s}" }
-                }
+                "{btn_label}"
             }
         }
     }

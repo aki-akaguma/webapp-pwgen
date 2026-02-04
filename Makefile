@@ -18,8 +18,12 @@ clean-dx:
 apply-patch:
 	cargo patch-crate
 
-#css:
+css:
+	tailwindcss -i ./resources/tailwind.input.css -o ./assets/css/tailwind.css
 #	npx @tailwindcss/cli -i ./input.css -o ./assets/css/tailwind.css
+
+css-watch:
+	tailwindcss -i ./resources/tailwind.input.css -o ./assets/css/tailwind.css --watch
 
 bundle-web:
 	dx bundle --web --release --base-path "/pwgen"

@@ -113,8 +113,11 @@ const PRE_OVERLAY: Asset = asset!("/assets/pre/overlay.svg");
 #[component]
 fn Pre() -> Element {
     let mut is_loading = use_signal(|| false);
-    rsx! {
+    /*
         document::Stylesheet { href: CSS_BOOTSTRAP }
+        document::Script { src: "https://cdn.tailwindcss.com" }
+    */
+    rsx! {
         document::Stylesheet { href: CSS_MAIN }
         document::Stylesheet { href: PRE_STYLE }
         document::Stylesheet { href: PRE_LOADING }
@@ -152,12 +155,15 @@ fn Pre() -> Element {
 }
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
-const CSS_BOOTSTRAP: Asset = asset!("/assets/css/bootstrap.min.css");
+const CSS_TAILWIND: Asset = asset!("/assets/css/tailwind.css");
 const CSS_MAIN: Asset = asset!("/assets/css/main.css");
 
 /// the component of dioxus `App`
 #[component]
 fn App() -> Element {
+    /*
+        document::Script { src: "https://cdn.tailwindcss.com" }
+    */
     rsx! {
         document::Link { rel: "icon", href: FAVICON }
         document::Link { rel: "preconnect", href: "https://fonts.googleapis.com" }
@@ -173,12 +179,14 @@ fn App() -> Element {
                 "family=Inter:wght@400;500;700&display=swap",
             ),
         }
-        document::Stylesheet { href: CSS_BOOTSTRAP }
         document::Stylesheet { href: CSS_MAIN }
+        document::Stylesheet { href: CSS_TAILWIND }
 
         Alive {}
         Info {}
-        div { id: "app-shell",
+        div {
+            id: "app-shell",
+            class: "flex flex-col w-full min-w-[260px] max-w-[700px] min-h-screen mx-auto relative overflow-x-hidden bg-[#add8e6]",
             Home {}
             Version {}
         }

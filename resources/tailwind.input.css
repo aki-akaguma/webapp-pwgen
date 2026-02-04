@@ -1,0 +1,49 @@
+@import "tailwindcss";
+@source "./src/**/*.{rs,html,css}";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+*/
+@layer components {
+  .app-title {
+    @apply text-emerald-900
+  }
+  .app-title-bold {
+    @apply font-bold
+  }
+  /* password length */
+  .app-range-label {
+    @apply block mb-2 text-base font-medium
+  }
+  .app-range-bar {
+    @apply w-full h-2 bg-gray-700 rounded-full appearance-none cursor-pointer
+  }
+  /* lowercase, uppercase, ... */
+  .app-switch-bar {
+    @apply appearance-none w-11 h-6 bg-gray-600 rounded-full checked:bg-blue-600 cursor-pointer transition-colors duration-300
+  }
+  .app-switch-notch {
+    @apply absolute top-0 left-0 w-6 h-6 bg-white rounded-full border border-gray-400 shadow-sm transition-transform duration-300 peer-checked:translate-x-full peer-checked:border-blue-600 cursor-pointer
+  }
+  .app-switch-label {
+    @apply text-base font-medium cursor-pointer
+  }
+  .app-switch-label-mono {
+    @apply text-base font-mono cursor-pointer
+  }
+  /* generate passwords */
+  .app-gen-btn {
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-2xl text-lg cursor-pointer
+  }
+  /* copy to clippboard */
+  .app-copy-btn {
+    @apply text-white font-bold py-1 px-2 rounded-xl text-sm cursor-pointer
+  }
+  /* password text */
+  .app-password-text {
+    @apply font-mono text-lg text-black
+  }
+}

@@ -1,6 +1,15 @@
 use dioxus::prelude::*;
 
 const CSS_PWGEN: Asset = asset!("/assets/css/pwgen.css");
+const IMG_APP_TITLE: Asset = asset!(
+    "/assets/app.png",
+    ImageAssetOptions::new()
+        .with_size(ImageSize::Manual {
+            width: 140,
+            height: 140
+        })
+        .with_format(ImageFormat::Webp)
+);
 
 /// the component of `tap tap tap beat`
 #[component]
@@ -10,13 +19,16 @@ pub fn Pwgen() -> Element {
     let passwords = use_signal(Vec::<String>::new);
     rsx! {
         document::Stylesheet { href: CSS_PWGEN }
-        div { id: "pwgen",
-            div { id: "pwgen-header", class: "text-center",
-                h1 { class: "display-4 app-title app-title-bold", "{title1_s}" }
-                p { class: "lead app-title", "{title2_s}" }
+        div { id: "pwgen", class: "container mx-auto px-4",
+            div { class: "flex items-center gap-4",
+                img { src: IMG_APP_TITLE, width: "70px" }
+                div { id: "pwgen-header", class: "text-center my-4",
+                    h1 { class: "text-5xl app-title app-title-bold", "{title1_s}" }
+                    p { class: "text-lg app-title mt-2", "{title2_s}" }
+                }
             }
-            div { class: "card bg-dark border-secondary shadow-lg",
-                div { class: "card-body text-light",
+            div { class: "bg-gray-800 border border-gray-600 rounded-xl shadow-2xl",
+                div { class: "p-6",
                     PwgenContentInputs { passwords }
                 }
             }
@@ -46,15 +58,15 @@ fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
         passwords.set(new_passwords);
     });
     rsx! {
-        div { class: "row g-4",
-            div { class: "col-12",
-                label { class: "form-label", r#for: "passwordLength",
+        div { class: "flex flex-wrap gap-4",
+            div { class: "w-full",
+                label { class: "app-range-label", r#for: "passwordLength",
                     "Password Length: {password_length}"
                 }
                 input {
                     id: "passwordLength",
                     r#type: "range",
-                    class: "form-range",
+                    class: "app-range-bar",
                     min: "4",
                     max: "32",
                     value: "{password_length}",
@@ -64,11 +76,12 @@ fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
                     },
                 }
             }
-            div { class: "col-12",
-                div { class: "row",
+            div { class: "w-full",
+                div { class: "flex flex-wrap",
                     PwgenContentCB {
                         id: "includeLowercase",
-                        label: "Lowercase (a-z)",
+                        label1: "Lowercase",
+                        label2: "(a-z)",
                         is_checked: include_lowercase(),
                         onchange: move |_evt| {
                             include_lowercase.set(!include_lowercase());
@@ -76,7 +89,8 @@ fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
                     }
                     PwgenContentCB {
                         id: "includeUppercase",
-                        label: "Uppercase (A-Z)",
+                        label1: "Uppercase",
+                        label2: "(A-Z)",
                         is_checked: include_uppercase(),
                         onchange: move |_evt| {
                             include_uppercase.set(!include_uppercase());
@@ -84,7 +98,8 @@ fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
                     }
                     PwgenContentCB {
                         id: "includeNumbers",
-                        label: "Numbers (0-9)",
+                        label1: "Numbers",
+                        label2: "(0-9)",
                         is_checked: include_numbers(),
                         onchange: move |_evt| {
                             include_numbers.set(!include_numbers());
@@ -92,7 +107,8 @@ fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
                     }
                     PwgenContentCB {
                         id: "includeSymbols",
-                        label: "Symbols (!@#$...)",
+                        label1: "Symbols",
+                        label2: "(!@#$...)",
                         is_checked: include_symbols(),
                         onchange: move |_evt| {
                             include_symbols.set(!include_symbols());
@@ -101,9 +117,9 @@ fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
                 }
             }
         }
-        div { class: "d-grid mt-4",
+        div { class: "grid mt-4",
             button {
-                class: "btn btn-primary btn-lg",
+                class: "app-gen-btn",
                 onclick: move |_evt| {
                     let params = PwgenParams {
                         include_lowercase: include_lowercase(),
@@ -123,22 +139,29 @@ fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
 #[component]
 fn PwgenContentCB(
     id: String,
-    label: String,
+    label1: String,
+    label2: String,
     is_checked: bool,
     onchange: EventHandler<FormEvent>,
 ) -> Element {
     rsx! {
-        div { class: "col-md-6",
-            div { class: "form-check form-switch",
-                input {
-                    id: id.clone(),
-                    class: "form-check-input",
-                    r#type: "checkbox",
-                    r#role: "switch",
-                    checked: "{is_checked}",
-                    onchange: move |evt| onchange.call(evt),
+        div { class: "md:w-1/2 w-full mb-3",
+            div { class: "flex items-center",
+                div { class: "relative inline-block w-11 h-6 mr-2",
+                    input {
+                        id: id.clone(),
+                        class: "peer app-switch-bar",
+                        r#type: "checkbox",
+                        r#role: "switch",
+                        checked: "{is_checked}",
+                        onchange: move |evt| onchange.call(evt),
+                    }
+                    label { class: "app-switch-notch", r#for: id.clone() }
                 }
-                label { class: "form-check-label", r#for: id, "{label}" }
+                label { class: "app-switch-label", r#for: id.clone(),
+                    "{label1}"
+                    label { class: "app-switch-label-mono", r#for: id, " {label2}" }
+                }
             }
         }
     }
@@ -149,8 +172,8 @@ fn PwgenContentGeneratedPasswordsElement(passwords: ReadSignal<Vec<String>>) -> 
     let title_s = "Generated Passwords";
     rsx! {
         div { class: "mt-5",
-            h2 { class: "text-center mb-4 app-title", "{title_s}" }
-            ul { class: "list-group list-group-flush",
+            h2 { class: "text-center mb-4 text-2xl app-title app-title-bold", "{title_s}" }
+            ul { class: "border-t border-gray-600",
                 PwgenContentGeneratedPasswordsElement2 { passwords }
             }
         }
@@ -198,16 +221,16 @@ fn PwgenContentGeneratedPassword(
     onclick: EventHandler<MouseEvent>,
 ) -> Element {
     let btn_class = if is_current {
-        "btn-success"
+        "bg-cyan-700 hover:bg-cyan-900"
     } else {
-        "btn-info"
+        "bg-cyan-500 hover:bg-cyan-700"
     };
     let btn_label = if is_current { "Copied!" } else { "Copy" };
     rsx! {
-        li { class: "list-group-item bg-transparent text-light border-secondary d-flex justify-content-between align-items-center",
-            span { class: "font-monospace fs-5 password-text", "{password}" }
+        li { class: "flex justify-between items-center py-3 border-b border-gray-600",
+            span { class: "app-password-text", "{password}" }
             button {
-                class: "btn {btn_class} btn-sm",
+                class: "{btn_class} app-copy-btn",
                 onclick: move |evt| onclick.call(evt),
                 "{btn_label}"
             }

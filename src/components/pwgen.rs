@@ -239,7 +239,7 @@ fn PwgenContentGeneratedPassword(
 }
 
 async fn copy_to_clipboard(password: String) -> Result<()> {
-    let js = format!("navigator.clipboard.writeText('{}');", password);
+    let js = format!("{{navigator.clipboard.writeText('{}');}}", password);
     let _v = document::eval(&js).await?;
     Ok(())
 }

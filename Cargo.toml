@@ -27,7 +27,7 @@ dioxus-fullstack = "0.7.3"
 dioxus-desktop = { version = "0.7.3", optional=true }
 dioxus-logger = "0.7.3"
 
-browserinfocm = "0.1.13"
+browserinfocm = "0.1.14"
 
 anyhow = { version = "1.0" }
 async-sleep-aki = "0.1"

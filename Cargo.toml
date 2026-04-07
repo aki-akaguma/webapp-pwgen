@@ -19,18 +19,18 @@ repository = "https://github.com/aki-akaguma/webapp-pwgen"
 crates = ["dioxus-fullstack"]
 
 [patch.crates-io]
-dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.3" }
+dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.4" }
 
 [dependencies]
-dioxus = { version = "0.7.3", features = ["fullstack","router"] }
-dioxus-fullstack = "0.7.3"
-dioxus-desktop = { version = "0.7.3", optional=true }
-dioxus-logger = "0.7.3"
+dioxus = { version = "0.7.4", features = ["fullstack","router"] }
+dioxus-fullstack = "0.7.4"
+dioxus-desktop = { version = "0.7.4", optional=true }
+dioxus-logger = "0.7.4"
 
-browserinfocm = "0.1.14"
+browserinfocm = "0.1.15"
+async-sleep-aki = "0.1"
 
 anyhow = { version = "1.0" }
-async-sleep-aki = "0.1"
 console_error_panic_hook = "0.1"
 reqwest = { version = "0.12", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
@@ -61,3 +61,8 @@ database = []
 backend_delay = []
 backend_homedir = ["database"]
 backend_text = []
+
+[profile.release]
+strip = "debuginfo"
+opt-level = "s"
+lto = true

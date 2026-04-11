@@ -7,12 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+* updated crates: dioxus(0.7.5), browserinfocm(0.1.16)
+
+
+## [0.1.4] (2026-04-07)
+### Changed
 * profile.release: opt-level = "s"
 * updated crates: dioxus(0.7.4), browserinfocm(0.1.15)
 
 ### Fixed
 * android wva
-
 
 ## [0.1.3] (2026-02-12)
 ### Fixed

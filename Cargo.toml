@@ -1,6 +1,6 @@
 [package]
 name = "pwgen"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["aki <aki.akaguma@hotmail.com>"]
 edition = "2021"
 description = """
@@ -19,15 +19,15 @@ repository = "https://github.com/aki-akaguma/webapp-pwgen"
 crates = ["dioxus-fullstack"]
 
 [patch.crates-io]
-dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.4" }
+dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.5" }
 
 [dependencies]
-dioxus = { version = "0.7.4", features = ["fullstack","router"] }
-dioxus-fullstack = "0.7.4"
-dioxus-desktop = { version = "0.7.4", optional=true }
+dioxus = { version = "0.7.5", features = ["fullstack","router"] }
+dioxus-fullstack = "0.7.5"
+dioxus-desktop = { version = "0.7.5", optional=true }
 dioxus-logger = "0.7.4"
 
-browserinfocm = "0.1.15"
+browserinfocm = "0.1.16"
 async-sleep-aki = "0.1"
 
 anyhow = { version = "1.0" }

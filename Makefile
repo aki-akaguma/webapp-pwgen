@@ -15,6 +15,18 @@ clean:
 clean-dx:
 	rm -fr target/dx
 
+check:
+	cargo check --features server
+	cargo check --features web
+	cargo check --features desktop
+	cargo check --features mobile
+
+clippy:
+	cargo clippy --features server
+	cargo clippy --features web
+	cargo clippy --features desktop
+	cargo clippy --features mobile
+
 apply-patch:
 	cargo patch-crate
 

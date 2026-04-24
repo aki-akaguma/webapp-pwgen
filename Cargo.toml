@@ -19,21 +19,25 @@ repository = "https://github.com/aki-akaguma/webapp-pwgen"
 crates = ["dioxus-fullstack"]
 
 [patch.crates-io]
-dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.5" }
+dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.6" }
 
 [dependencies]
-dioxus = { version = "0.7.5", features = ["fullstack","router"] }
-dioxus-fullstack = "0.7.5"
-dioxus-desktop = { version = "0.7.5", optional=true }
-dioxus-logger = "0.7.4"
+# dioxus family
+dioxus = { version = "0.7.6", features = ["fullstack","router"] }
+dioxus-desktop = { version = "0.7.6", optional = true }
+
+# what dioxus depends on
+anyhow = { version = "1.0" }
+serde = { version = "1.0", features = ["derive"] }
+
+# what dioxus depends on, optional
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+
+# other, optional
+console_error_panic_hook = { version = "0.1", optional = true }
 
 browserinfocm = "0.1.16"
 async-sleep-aki = "0.1"
-
-anyhow = { version = "1.0" }
-console_error_panic_hook = "0.1"
-reqwest = { version = "0.12", features = ["json"] }
-serde = { version = "1.0", features = ["derive"] }
 
 [target.'cfg(target_os = "android")'.dependencies]
 openssl = { version = "0.10", features = ["vendored"] }
@@ -51,7 +55,7 @@ rust-version-info-file = "0.2"
 [features]
 default = []
 
-web = ["dioxus/web", "browserinfocm/web"]
+web = ["dioxus/web", "browserinfocm/web", "dep:console_error_panic_hook"]
 desktop = ["dioxus/desktop", "browserinfocm/desktop", "dep:dioxus-desktop"]
 mobile = ["dioxus/mobile", "browserinfocm/mobile"]
 server = ["dioxus/server", "browserinfocm/server", "database"]

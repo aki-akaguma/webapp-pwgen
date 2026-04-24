@@ -20,10 +20,10 @@ fn main() {
     console_error_panic_hook::set_once();
 
     #[cfg(not(debug_assertions))]
-    let level = dioxus_logger::tracing::Level::INFO;
+    let level = dioxus::logger::tracing::Level::INFO;
     #[cfg(debug_assertions)]
-    let level = dioxus_logger::tracing::Level::DEBUG;
-    dioxus_logger::init(level).expect("failed to init logger");
+    let level = dioxus::logger::tracing::Level::DEBUG;
+    dioxus::logger::init(level).expect("failed to init logger");
 
     // In the case of release desktop and release mobile,
     // connect backend calls to public api
@@ -33,7 +33,7 @@ fn main() {
         // Specify the URL that previously delpoyed the public webapp.
         // This webapp was created with `dx bundle --web`.
         let backend_url = "https://aki.omusubi.org/pwgen";
-        dioxus_fullstack::set_server_url(backend_url);
+        dioxus::fullstack::set_server_url(backend_url);
     }
 
     dioxus::LaunchBuilder::new()

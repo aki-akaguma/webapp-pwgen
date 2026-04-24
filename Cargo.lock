@@ -419,9 +419,9 @@ dependencies = [
 
 [[package]]
 name = "browserinfocm"
-version = "0.1.17"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89fd7a7b0f10ec6b52d11bd51e76277b6df15208bb659603673951f6f905783d"
+checksum = "5567ee4d6894428d17e445db914667d1bcdae1b376e21531d10206af6f6ab1a3"
 dependencies = [
  "anyhow",
  "async-sleep-aki",

@@ -36,7 +36,7 @@ reqwest = { version = "0.12", default-features = false, features = ["json"] }
 # other, optional
 console_error_panic_hook = { version = "0.1", optional = true }
 
-browserinfocm = "0.1.16"
+browserinfocm = "0.2.0"
 async-sleep-aki = "0.1"
 
 [target.'cfg(target_os = "android")'.dependencies]

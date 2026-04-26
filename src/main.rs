@@ -113,6 +113,11 @@ const PRE_BGIMAGE_AVIF: Asset = asset!(
 );
 const PRE_OVERLAY: Asset = asset!("/assets/pre/overlay.svg");
 
+// Standby time for performance. If it's too short, you won't feel "bubbly",
+// and if it's too long, it will feel "heavy". Approximately 300ms to 500ms
+// is appropriate according to general UI animation standards.
+const TRANSITION_DELAY_MS: i32 = 300;
+
 #[component]
 fn Pre() -> Element {
     let mut is_loading = use_signal(|| false);
@@ -130,7 +135,7 @@ fn Pre() -> Element {
                 is_loading.set(true);
                 spawn(
                     delayed_call(
-                        500,
+                        TRANSITION_DELAY_MS,
                         async move {
                             navigator().replace(Route::App {});
                         },

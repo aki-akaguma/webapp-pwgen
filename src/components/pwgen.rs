@@ -138,9 +138,9 @@ fn PwgenContentInputs(passwords: Signal<Vec<String>>) -> Element {
 
 #[component]
 fn PwgenContentCB(
-    id: String,
-    label1: String,
-    label2: String,
+    id: &'static str,
+    label1: &'static str,
+    label2: &'static str,
     is_checked: bool,
     onchange: EventHandler<FormEvent>,
 ) -> Element {
@@ -149,16 +149,16 @@ fn PwgenContentCB(
             div { class: "flex items-center",
                 div { class: "relative inline-block w-11 h-6 mr-2",
                     input {
-                        id: id.clone(),
+                        id: id,
                         class: "peer app-switch-bar",
                         r#type: "checkbox",
                         r#role: "switch",
                         checked: "{is_checked}",
                         onchange: move |evt| onchange.call(evt),
                     }
-                    label { class: "app-switch-notch", r#for: id.clone() }
+                    label { class: "app-switch-notch", r#for: id }
                 }
-                label { class: "app-switch-label", r#for: id.clone(),
+                label { class: "app-switch-label", r#for: id,
                     "{label1}"
                     label { class: "app-switch-label-mono", r#for: id, " {label2}" }
                 }
@@ -239,18 +239,26 @@ fn PwgenContentGeneratedPassword(
 }
 
 async fn copy_to_clipboard(password: String) -> Result<()> {
-    let js = format!("{{navigator.clipboard.writeText('{}');}}", password);
-    let _v = document::eval(&js).await?;
+    // 1. Define JS code (wait for data from Rust with dioxus.recv())
+    let eval = document::eval(
+        r#"
+const text = await dioxus.recv();
+await navigator.clipboard.writeText(text);
+"#,
+    );
+
+    // 2. Send password from Rust
+    eval.send(password)
+        .map_err(|e| anyhow::anyhow!(e.to_string()))?;
+
     Ok(())
 }
 
 fn generate_passwords(len: i32, pa: PwgenParams) -> Vec<String> {
     let mut new_passwords: Vec<String> = Vec::new();
-    let mut i = 0;
-    while i < 8 {
+    for _ in 0..8 {
         let s = generate_password(len, pa);
         new_passwords.push(s);
-        i += 1;
     }
     new_passwords
 }
@@ -271,6 +279,11 @@ fn generate_password(len: i32, pa: PwgenParams) -> String {
     //const SYMBOLS_CS: &str = "!@#$%^&*()_+-=[]{}|;:,.<>?";
     //
     let mut charset = "".to_string();
+
+    // NOTE: We intentionally weight lowercase and numbers more heavily (2x)
+    // to generate passwords that are more human-readable and easier to type,
+    // while still maintaining high entropy by including uppercase and symbols.
+
     if pa.include_lowercase {
         charset += LOWERCASE_CS;
         charset += LOWERCASE_CS;
@@ -288,13 +301,16 @@ fn generate_password(len: i32, pa: PwgenParams) -> String {
         // Default to lowercase if no character type is selected
         charset += LOWERCASE_CS;
     }
-    let charset: Vec<u8> = charset.into_bytes();
-    let mut password: Vec<u8> = Vec::new();
-    let mut i = 0;
-    while i < len {
-        let idx = fastrand::u32(0..(charset.len() as u32)) as usize;
-        password.push(charset[idx]);
-        i += 1;
-    }
-    String::from_utf8_lossy(&password).to_string()
+    let charset = charset.as_bytes();
+    (0..len)
+        .map(|_| {
+            // Rationale: We use fastrand (non-cryptographic PRNG) instead of a CSPRNG
+            // to prioritize generation speed and minimal overhead.
+            // For standard personal use cases, this provides a sufficient balance
+            // between performance and randomness.
+            let idx = fastrand::u32(0..charset.len() as u32) as usize;
+            // It's ASCII so you can safely cast it.
+            charset[idx] as char
+        })
+        .collect()
 }

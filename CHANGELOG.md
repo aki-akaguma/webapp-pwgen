@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+* prop optimization
 * update crate: browserinfocm(0.2.1)
 * I reorganized the dependencies in `Cargo.toml`.
 * update crate: dioxus(0.7.6)

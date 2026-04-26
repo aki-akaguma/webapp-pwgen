@@ -36,6 +36,9 @@ fn main() {
         dioxus::fullstack::set_server_url(backend_url);
     }
 
+    #[cfg(feature = "server")]
+    browserinfocm::backend_init().expect("failed to init backend");
+
     dioxus::LaunchBuilder::new()
         // Set the desktop config
         .with_cfg(desktop! {

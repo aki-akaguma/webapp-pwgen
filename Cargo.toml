@@ -2,7 +2,7 @@
 name = "pwgen"
 version = "0.1.6"
 authors = ["aki <aki.akaguma@hotmail.com>"]
-edition = "2021"
+edition = "2024"
 description = """
 Password generator.
 """

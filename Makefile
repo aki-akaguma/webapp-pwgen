@@ -55,10 +55,6 @@ bundle-android-x86_64:
 	dx bundle --android --release --target=x86_64-linux-android
 	./scripts/apk-icon-assemble-r.sh pwgen x86_64 resources/android
 
-bundle-android-wv:
-	@rm -fr "target/dx"
-	./scripts/wv-apk-icon-assemble-r.sh pwgen resources/android ./scripts/android-webview-params.toml
-
 bundle-android-wva:
 	@rm -fr "target/dx"
 	./scripts/wva-apk-icon-assemble-r.sh pwgen resources/android resources/android ./scripts/android-webview-assets-params.toml

@@ -19,12 +19,12 @@ repository = "https://github.com/aki-akaguma/webapp-pwgen"
 crates = ["dioxus-fullstack"]
 
 [patch.crates-io]
-dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.7" }
+dioxus-fullstack = { path = "./patched/dioxus-fullstack-0.7.9" }
 
 [dependencies]
 # dioxus family
-dioxus = { version = "0.7.7", features = ["fullstack","router"] }
-dioxus-desktop = { version = "0.7.7", optional = true }
+dioxus = { version = "0.7.9", features = ["fullstack","router"] }
+dioxus-desktop = { version = "0.7.9", optional = true }
 
 # what dioxus depends on
 anyhow = { version = "1.0" }
@@ -36,7 +36,7 @@ reqwest = { version = "0.12", default-features = false, features = ["json"] }
 # other, optional
 console_error_panic_hook = { version = "0.1", optional = true }
 
-browserinfocm = "0.2.2"
+browserinfocm = "0.2.3"
 async-sleep-aki = "0.1"
 
 [target.'cfg(target_os = "android")'.dependencies]
